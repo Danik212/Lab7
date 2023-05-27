@@ -11,10 +11,10 @@ import com.topic2.android.notes.routing.NotesRouter
 import com.topic2.android.notes.routing.Screen
 import com.topic2.android.notes.theme.NotesTheme
 import com.topic2.android.notes.viewmodel.MainViewModelFactory
-import screens.MainViewModel
-import screens.NotesScreen
-import ui.components.SaveNoteScreen
-import ui.components.TrashScreen
+import com.topic2.android.notes.viewmodel.MainViewModel
+import com.topic2.android.notes.util.screens.NotesScreen
+import com.topic2.android.notes.util.screens.SaveNoteScreen
+import com.topic2.android.notes.util.screens.TrashScreen
 
 
 /**

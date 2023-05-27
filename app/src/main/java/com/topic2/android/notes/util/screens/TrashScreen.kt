@@ -1,37 +1,41 @@
+package com.topic2.android.notes.util.screens
+
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
-import androidx.compose.runtime.
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.painterResource
 import com.topic2.android.notes.R
 import com.topic2.android.notes.domain.model.NoteModel
 import com.topic2.android.notes.routing.Screen
+import com.topic2.android.notes.util.companents.AppDrawer
+import com.topic2.android.notes.util.companents.Note
+import com.topic2.android.notes.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
-import screens.MainViewModel
 
 private const val NO_DIALOG = 1
 private const val RESTORE_NOTES_DIALOG = 2
 private const val PERMANENTLY_DELETE_DIALOG = 3
 
-@SuppressLint(UnusedMaterialScaffoldPaddingParameter)
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 @ExperimentalMaterialApi
-fun TrashScreen(viewModel MainViewModel) {
+fun TrashScreen(viewModel: MainViewModel) {
 
-    val notesInThrash ListNoteModel by viewModel.notesInTrash
-    .observeAsState(listOf())
+    val notesInThrash: List<NoteModel> by viewModel.notesInTrash
+        .observeAsState(listOf())
 
-    val selectedNotes ListNoteModel by viewModel.selectedNotes
-    .observeAsState(listOf())
+    val selectedNotes: List<NoteModel> by viewModel.selectedNotes
+        .observeAsState(listOf())
 
-    val dialogState MutableStateInt = rememberSaveable { mutableStateOf(NO_DIALOG) }
+    val dialogState: MutableState<Int> = rememberSaveable { mutableStateOf(NO_DIALOG) }
 
-    val scaffoldState ScaffoldState = rememberScaffoldState()
+    val scaffoldState: ScaffoldState = rememberScaffoldState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -65,24 +69,24 @@ fun TrashScreen(viewModel MainViewModel) {
 
             val dialog = dialogState.value
             if (dialog != NO_DIALOG) {
-                val confirmAction () - Unit = when (dialog) {
-                    RESTORE_NOTES_DIALOG - {
+                val confirmAction: () -> Unit = when (dialog) {
+                    RESTORE_NOTES_DIALOG -> {
                         {
                             viewModel.restoreNotes(selectedNotes)
                             dialogState.value = NO_DIALOG
                         }
                     }
-                    PERMANENTLY_DELETE_DIALOG - {
+                    PERMANENTLY_DELETE_DIALOG -> {
                         {
                             viewModel.permanentlyDeleteNotes(selectedNotes)
                             dialogState.value = NO_DIALOG
                         }
                     }
-                    else - {
-                    {
-                        dialogState.value = NO_DIALOG
+                    else -> {
+                        {
+                            dialogState.value = NO_DIALOG
+                        }
                     }
-                }
                 }
 
                 AlertDialog(
@@ -91,12 +95,12 @@ fun TrashScreen(viewModel MainViewModel) {
                     text = { Text(mapDialogText(dialog)) },
                     confirmButton = {
                         TextButton(onClick = confirmAction) {
-                            Text(Confirm)
+                            Text("Confirm")
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { dialogState.value = NO_DIALOG }) {
-                            Text(Dismiss)
+                            Text("Dismiss")
                         }
                     }
                 )
@@ -107,18 +111,18 @@ fun TrashScreen(viewModel MainViewModel) {
 
 @Composable
 private fun TrashTopAppBar(
-    onNavigationIconClick () - Unit,
-onRestoreNotesClick () - Unit,
-onDeleteNotesClick () - Unit,
-areActionsVisible Boolean
+    onNavigationIconClick: () -> Unit,
+    onRestoreNotesClick: () -> Unit,
+    onDeleteNotesClick: () -> Unit,
+    areActionsVisible: Boolean
 ) {
     TopAppBar(
-        title = { Text(text = Trash, color = MaterialTheme.colors.onPrimary) },
+        title = { Text(text = "Trash", color = MaterialTheme.colors.onPrimary) },
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     imageVector = Icons.Filled.List,
-                    contentDescription = Drawer Button
+                    contentDescription = "Drawer Button"
                 )
             }
         },
@@ -127,14 +131,14 @@ areActionsVisible Boolean
                 IconButton(onClick = onRestoreNotesClick) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_restore_from_trash_24),
-                        contentDescription = Restore Notes Button,
+                        contentDescription = "Restore Notes Button",
                         tint = MaterialTheme.colors.onPrimary
                     )
                 }
                 IconButton(onClick = onDeleteNotesClick) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_delete_forever_24),
-                        contentDescription = Delete Notes Button,
+                        contentDescription = "Delete Notes Button",
                         tint = MaterialTheme.colors.onPrimary
                     )
                 }
@@ -146,18 +150,18 @@ areActionsVisible Boolean
 @Composable
 @ExperimentalMaterialApi
 private fun Content(
-    notes ListNoteModel,
-    onNoteClick (NoteModel) - Unit,
-selectedNotes ListNoteModel,
+    notes: List<NoteModel>,
+    onNoteClick: (NoteModel) -> Unit,
+    selectedNotes: List<NoteModel>,
 ) {
-    val tabs = listOf(REGULAR, CHECKABLE)
+    val tabs = listOf("REGULAR", "CHECKABLE")
 
-    Init state for selected tab
+    // Init state for selected tab
     var selectedTab by remember { mutableStateOf(0) }
 
     Column {
         TabRow(selectedTabIndex = selectedTab) {
-            tabs.forEachIndexed { index, title -
+            tabs.forEachIndexed { index, title ->
                 Tab(
                     text = { Text(title) },
                     selected = selectedTab == index,
@@ -167,17 +171,17 @@ selectedNotes ListNoteModel,
         }
 
         val filteredNotes = when (selectedTab) {
-            0 - {
+            0 -> {
                 notes.filter { it.isCheckedOff == null }
             }
-                1 - {
+            1 -> {
                 notes.filter { it.isCheckedOff != null }
             }
-            else - throw IllegalStateException(Tab not supported - index $selectedTab)
+            else -> throw IllegalStateException("Tab not supported - index: $selectedTab")
         }
 
         LazyColumn {
-            items(count = filteredNotes.size) { noteIndex -
+            items(count = filteredNotes.size) { noteIndex ->
                 val note = filteredNotes[noteIndex]
                 val isNoteSelected = selectedNotes.contains(note)
                 Note(
@@ -190,14 +194,14 @@ selectedNotes ListNoteModel,
     }
 }
 
-private fun mapDialogTitle(dialog Int) String = when (dialog) {
-    RESTORE_NOTES_DIALOG - Restore notes
-            PERMANENTLY_DELETE_DIALOG - Delete notes forever
-    else - throw RuntimeException(Dialog not supported $dialog)
+private fun mapDialogTitle(dialog: Int): String = when (dialog) {
+    RESTORE_NOTES_DIALOG -> "Restore notes"
+    PERMANENTLY_DELETE_DIALOG -> "Delete notes forever"
+    else -> throw RuntimeException("Dialog not supported: $dialog")
 }
 
-private fun mapDialogText(dialog Int) String = when (dialog) {
-    RESTORE_NOTES_DIALOG - Are you sure you want to restore selected notes
-    PERMANENTLY_DELETE_DIALOG - Are you sure you want to delete selected notes permanently
-    else - throw RuntimeException(Dialog not supported $dialog)
+private fun mapDialogText(dialog: Int): String = when (dialog) {
+    RESTORE_NOTES_DIALOG -> "Are you sure you want to restore selected notes?"
+    PERMANENTLY_DELETE_DIALOG -> "Are you sure you want to delete selected notes permanently?"
+    else -> throw RuntimeException("Dialog not supported: $dialog")
 }

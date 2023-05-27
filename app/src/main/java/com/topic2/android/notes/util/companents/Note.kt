@@ -1,6 +1,4 @@
-@file:OptIn(ExperimentalMaterialApi::class)
-
-package ui.components
+package com.topic2.android.notes.util.companents
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.topic2.android.notes.domain.model.NoteModel
 import com.topic2.android.notes.util.fromHex
+import com.topic2.android.notes.util.companents.NoteColor
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
